@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JARVIS - Science Project Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+        }
+        h1 {
+            color: #333;
+        }
+        #output {
+            margin: 20px;
+            font-size: 18px;
+            color: #555;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jarvis - Science Project Assistant</h1>
+    <p id="output">Hello, I am JARVIS, your personal assistant for the science exhibition project. How can I assist you today?</p>
+    <button onclick="startListening()">Ask JARVIS</button>
+
+    <script>
+        // Initialize Speech Synthesis and Recognition API
+        const synth = window.speechSynthesis;
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'en-US';
+        recognition.interimResults = false;
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            synth.speak(utterance);
+        }
+
+        function startListening() {
+            speak("I'm listening...");
+            recognition.start();
+        }
+
+        recognition.onresult = function(event) {
+            const query = event.results[0][0].transcript.toLowerCase();  // Convert to lowercase
+            document.getElementById("output").innerText = `You said: ${query}`;
+            handleCommand(query);
+        };
+
+        function handleCommand(query) {
+            let response;
+            if (query.includes("science project") || query.includes("exhibition")) {
+                response = "Our science exhibition project is about Smart City technology. We focus on how IoT, smart infrastructure, and renewable energy can make cities more efficient and sustainable.";
+            } else if (query.includes("laser security")) {
+                response = "Our science exhibition project has a laser-based security system. It uses a simple circuit to create an invisible fence around a building or house and sounds an alarm if its path is obstructed.";
+            } else if (query.includes("rain detector")) {
+                response = "Our science exhibition project has a rain detector system that buzzes as an alert whenever it detects water.";
+            } else if (query.includes("earthquake sensor")) {
+                response = "Our earthquake sensor uses a simple circuit with a metal pendulum that moves during tremors, completing a circuit and triggering an alarm for early seismic warnings.";
+            } else if (query.includes("hello")) {
+                response = "Hello everyone! I am Jarvis, here to guide you with our science project. How can I assist you today?";
+            } else if (query.includes("quit") || query.includes("exit")) {
+                response = "Goodbye!";
+                speak(response);
+                return;
+            } else {
+                response = "Sorry, I don't have an answer for that. Please ask something related to the science project.";
+            }
+
+            document.getElementById("output").innerText = response;
+            speak(response);
+        }
+
+        recognition.onerror = function(event) {
+            if (event.error === 'not-allowed') {
+                document.getElementById("output").innerText = "Microphone access was denied. Please enable it in your browser settings.";
+                speak("Microphone access was denied. Please enable it in your browser settings.");
+            } else {
+                document.getElementById("output").innerText = "Error occurred: " + event.error;
+                speak("Sorry, I didn't understand. Please try again.");
+            }
+        };
+
+        recognition.onspeechend = function() {
+            recognition.stop();
+        };
+    </script>
+</body>
+</html>
